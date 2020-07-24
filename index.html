@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Infocat Contable</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
+	<link rel="stylesheet" href="icofont.min.css">
+</head>
+<body>
+	<style>
+		ul i{font-size: 1.3rem;}
+		#fondoNegro{
+			background-color: #000;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			opacity: 0.8;
+			z-index:10;
+			display: none;
+			transition: .3s;
+		}
+		#contenidoDeslizable{
+			background-color: #fff;
+			/* min-height: 100vh; */
+			opacity: 1;
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			left: calc(200%);
+			right: calc(-100%);
+			overflow: hidden;
+			z-index:11;
+			transition: .5s;
+			display:none;
+		}
+		.mostrarPanel{
+			transition: .5s;
+			left: calc(25%)!important;
+			right: 0!important;
+		}
+	</style>
+<div id="app">
+	<section>
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark" style="background-color: #202124!important;">
+			<a class="navbar-brand" href="#">Infocat Contable</a>
+		</nav>
+	</section>
+	<section class="container-fluid">
+		<ul class="nav nav-tabs mt-3">
+			<li class="nav-item" role="presentation">
+				<a class="nav-link active" id="home-tab" data-toggle="tab" href="#tabCompras" role="tab" aria-controls="home" aria-selected="true"><i class="icofont-truck-loaded"></i> Compras</a>
+			</li>
+			<li class="nav-item" role="presentation">
+				<a class="nav-link" id="home-tab" data-toggle="tab" href="#tabVentas" role="tab" aria-controls="home" aria-selected="true"><i class="icofont-shopping-cart"></i> Ventas</a>
+			</li>
+			
+		</ul>
+	</section>
+	<section class="container-fluid px-4">
+		<div class="tab-content" id="myTabContent">
+			<div class="tab-pane fade show active py-3" id="tabCompras" role="tabpanel" aria-labelledby="home-tab">
+				<div class="row">
+					<div class="col d-flex align-items-center">
+						<button class="btn btn-outline-primary btn-sm" @click="activarNuevaCompra()"><i class="icofont-file-text"></i> Nueva compra</button>
+					</div>
+					<div class="col form-inline py-3">
+							<button class="btn btn-outline-secondary btn-sm" data-toggle="button" @click="filtroActivo=!filtroActivo"><i class="icofont-filter"></i> Filtro</button>
+					</div>
+				</div>
+
+				<div class="row py-3" v-if="filtroActivo">
+					<div class="col-6 col-md">
+						<label for=""><i class="icofont-filter"></i> Fecha Inicio</label>
+						<input type="date" class="form-control" v-model="fechaMasterCompra">
+					</div>
+					<div class="col-6 col-md">
+						<label for=""><i class="icofont-filter"></i> Fecha Fin</label>
+						<input type="date" class="form-control" v-model="fechaMasterCompra">
+					</div>
+					<div class="col-6 col-md">
+						<label for=""><i class="icofont-filter"></i> Comprobante</label>
+						<select class="form-control" id="">
+							<option value="-1">Todos</option>
+							<option value="1">Factura</option>
+							<option value="2">Boleta de venta</option>
+							<option value="3">Ticket</option>
+						</select>
+					</div>
+					<div class="col-6 col-md">
+						<label for=""><i class="icofont-filter"></i> Moneda</label>
+						<select class="form-control" id="">
+							<option value="-1">Todos</option>
+							<option value="1">Soles</option>
+							<option value="2">Dólares</option>
+						</select>
+					</div>
+					<div class="col-6 col-md">
+						<label for=""><i class="icofont-filter"></i> Proveedor</label>
+						<select class="form-control" id="">
+							<option value="-1">Todos</option>
+							<option value="20603333333">Infocat Soluciones</option>
+							<option value="11111115652">Ronad Lopez Quispe</option>
+						</select>
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="table-responsive">
+						<table class="table">
+							<thead class="thead-dark">
+								<tr>
+									<th>#</th>
+									<th>Fecha de emisión</th>
+									<th>RUC</th>
+									<th>Razón Social</th>
+									<th>Comprobante</th>
+									<th>Serie Correl.</th>
+									<th>Total</th>
+									<th>Moneda</th>
+									<th>T/C</th>
+									<th>Afecto</th>
+									<th>Cuenta</th>
+									<th>Fecha de Vencimiento</th>
+									<th>Fecha de Pago</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane fade py-3" id="tabVentas" role="tabpanel" aria-labelledby="profile-tab">...</div>
+			
+		</div>
+	</section>
+
+	<div id="fondoNegro" @click="regresarPanel()"></div>
+	<section id="panelDeslizable">
+		<div id="contenidoDeslizable" class="ml-auto p-4">
+			<h4>Nueva compra</h4>
+			<div class="row">
+				<div class="col">
+					<label for="">Fecha de emisión</label>
+					<input type="date" class="form-control" v-model="fechaHoy">
+					<label for="">RUC</label>
+					<input type="text" class="form-control" >
+					<label for="">Razón Social</label>
+					<input type="text" class="form-control" >
+					<label for="">Tipo de comprobante</label>
+					<div class="form-group">
+						<select id="my-select" class="custom-select" name="" >
+							<option value="1">Factura</option>
+							<option value="2">Boleta de venta</option>
+							<option value="3">Ticket</option>
+						</select>
+					</div>
+					<label for="">Serie y Correlativo</label>
+					<input type="text" class="form-control" placeholder='001-000001'>
+					<label for="">Monto total</label>
+					<input type="text" class="form-control">
+					<label for="">Moneda</label>
+					<div class="form-group">
+						<select id="my-select" class="custom-select" name="" v-model="moneda">
+							<option value="1">Soles</option>
+							<option value="2">Dólares</option>
+						</select>
+					</div>
+					<label for="" v-if="moneda==2">Tipo de cambio</label>
+					<input type="text" class="form-control" v-if="moneda==2">
+					<input type="checkbox" id="chkAfecto" v-model="afecto"> <label for="chkAfecto"><span v-if="afecto">Afecto a IGV</span><span v-else>Inafecto al IGV</span></label>
+					
+					<div>
+						<input type="checkbox" id="chkVencimiento" v-model="chkVencimiento" @click="chkVencimiento=!chkVencimiento"> <label for="chkVencimiento">F. Vencimiento</label><br>
+						<input type="date" class="form-control" v-if="chkVencimiento">
+					</div>
+					<div>
+						<input type="checkbox" id="chkPago" v-model="chkPago" @click="chkPago=!chkPago"> <label for="chkPago">F. Pago</label><br>
+						<input type="date" class="form-control" v-if="chkPago">
+					</div>
+
+				</div>
+			</div>
+		</div>
+		
+	</section>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+<!-- development version, includes helpful console warnings -->
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script src="js/moment.min.js"></script>
+
+<script>
+	var app = new Vue({
+	el: '#app',
+	data: {
+		fechaHoy: moment().format('YYYY-MM-DD'),
+		fechaMasterCompra: moment().format('YYYY-MM-DD'),
+		filtroActivo:false, moneda:1, afecto:true, chkVencimiento:false, chkPago:false,
+	},
+	methods:{
+		activarNuevaCompra(){
+			$('#fondoNegro').css('display', "unset")
+			$('#contenidoDeslizable').css('display', "block")
+			setTimeout( ()=>{$('#contenidoDeslizable').addClass('mostrarPanel')}, 300)
+		},
+		regresarPanel(){
+			$('#fondoNegro').css('display', "none")
+			$('#contenidoDeslizable').removeClass('mostrarPanel');
+			setTimeout( ()=>{$('#contenidoDeslizable').css('display', "none")}, 300)
+			
+		}
+		
+	}
+})
+</script>
+
+</body>
+</html>
